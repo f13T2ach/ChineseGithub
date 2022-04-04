@@ -18,8 +18,14 @@
 
     // Your code here...
     //加速器：https://zhuanlan.zhihu.com/p/428454772
+    //请注意！===这些项目需要你手动设置===
+    var time = 1000;//这是自动刷新翻译的间隔毫秒数，默认是1000毫秒意味着一秒刷新一次。
+    //==以上项目需要你手动设置
     window.onload = function () {
-      Main();
+        var fn = function(){
+              Main();
+    }
+    setInterval(fn,time);//sorry but that is necessary
     };
 
     //Replace elements
@@ -35,11 +41,17 @@
         var path = window.location.pathname;
         if(path=="/")
         {
+            console.info("[CG]Index");
             TransIndexPg();
         }
-        else if(document.body.outerHTML.includes("Issues")&&document.body.outerHTML.includes("Pull requests")&&document.body.outerHTML.includes("Code")&&!document.body.outerHTML.includes("History")&&!document.body.outerHTML.includes("Raw")&&!document.body.outerHTML.includes("Blame")){
+        else if(document.body.outerHTML.includes("Issues")&&document.body.outerHTML.includes("Pull requests")&&document.body.outerHTML.includes("Code")&&!document.body.outerHTML.includes("History")&&!document.body.outerHTML.includes("Raw")&&!document.body.outerHTML.includes("Blame")&&!path.includes("/issues")&&!document.body.outerHTML.includes("Filters")){
             //后面的非条件是用来分辨是不是文件或者文件夹的页面，不然就会出现把代码或者文件夹名称一起翻译的尴尬情况
+            console.info("[CG]Repository")
             TransRespIndxPg();
+        }
+        else if((path.includes("/issues")||path.includes("/pulls"))&&document.body.outerHTML.includes("Filters"))
+        {
+            TransIssueAndPullsPg()
         }
 
     }
@@ -79,8 +91,6 @@
         //top
         r(/Search or jump to…/g, '搜索或者跳转至...');
         r(/Public/g,'公共的');
-        r(/Code/g,'源码');
-        r(/Issues/g,'反馈');
         r(/Pull requests/g,'Pull管理');
         r(/Actions/g,'Action服务');
         r(/Projects/g,'项目管理');
@@ -97,10 +107,42 @@
         r(/No packages published/g,'该项目没有发布过包');
         r(/Publish your first package/g,'发布你的第一个包');
         r(/Create a new package/g,'我要发布一个');
+        //necessary
+        r(/Dismiss/g,'不了')
 
+    }
+
+    function TransIssueAndPullsPg()
+    {
+        TransRespIndxPg();
+        //top
+        //new one's help
+        r(/Label issues and pull requests for new contributors/g,'提交和处理问题并解决');
+        r(/Now, GitHub will help potential first-time contributors/g,'现在，GitHub将帮助潜在的首次撰稿人');
+        r(/discover issues/g,'探索');
+        r(/labeled with/g,'被标记为');
+        r(/good first issue/g,'好的开端的问题')
+        //filter lable;
+        r(/Filter/g,'筛选');r(/Filters/g,'筛选');//Translate same mean
+        r(/Open issues and pull requests/g,'只显示有效的Issue和Pull请求')
+        r(/Your issues/g,'只显示你创建的Issues');
+        r(/Your pull requests/g,'只显示你的Pull请求');
+        r(/Everything assigned to you/g,'只显示由你负责的');
+        r(/Everything mentioning you/g,'只显示提到你的');
+        r(/View advanced search syntax/g,'看更牛逼的搜索语法')
+        r(/Clear current search query, filters, and sorts/g,'清除当前搜索记录和偏好');
+        r(/New issue/g,'新建');
+        //none of issues
+        r(/Welcome to issues!/g,'欢迎使用Issues!');
+        r(/Issues are used to track todos, bugs, feature requests, and more. As issues are created, they’ll appear here in a searchable and filterable list./g,'Issues是用于报告Bug，公布软件开发进度，反馈用户想要的特性等等。Issues被创建时，他会出现在筛选器和搜索面板中。');
+        r(/To get started, you should/g,'要开始，你得先');
+        r(/create an issue/g,'创建一个Issues');
+        r(/ProTip!/g,'提示：')
+
+        //special things in pull page
+        r(/Welcome to pull requests!/g,'欢迎使用Pull Requests');
     }
 
     
 
 })();
-
