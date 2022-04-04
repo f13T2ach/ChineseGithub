@@ -13,20 +13,41 @@
 //因为有些单词会和别的不相干的对象混淆，所以某些容易理解的单词我这里不做翻译
 //非常抱歉麻烦你手动翻译。
 
-(function() {
+
+
+(function () {
     'use strict';
 
     // Your code here...
     //加速器：https://zhuanlan.zhihu.com/p/428454772
-    //请注意！===这些项目需要你手动设置===
-    var time = 1000;//这是自动刷新翻译的间隔毫秒数，默认是1000毫秒意味着一秒刷新一次。
-    //==以上项目需要你手动设置
+    Main();
     window.onload = function () {
-        var fn = function(){
-              Main();
-    }
-    setInterval(fn,time);//sorry but that is necessary
+        Main();
     };
+
+    // 需要观察的节点
+    const targetNode = document.querySelector('title')
+    // 配置器的配置：需要监听的变动
+    const config = { characterData: true, subtree: true, childList: true }
+    // 变动时回调
+    const callback = function(mutations) {
+        Main();
+    }
+    // 创建一个MutationObserver实例
+    const observer = new MutationObserver(callback)
+    // 监听目标节点
+    observer.observe(targetNode, config)
+    //observer.disconnect()
+
+
+
+    //refresh button
+    //var oHead = document.getElementsByClassName('show-on-focus').item(0);
+    //var oScript= document.createElement("a");
+    //oScript.className = "btn btn-primary mr-2"
+    //oScript.text="刷新翻译"
+    //oHead.append(oScript)
+
 
     //Replace elements
     //NOTE:正则表达式是必须的
@@ -38,6 +59,7 @@
 
     function Main()
     {
+
         var path = window.location.pathname;
         if(path=="/")
         {
@@ -53,13 +75,20 @@
         {
             TransIssueAndPullsPg()
         }
-
+        else if(path.includes("/issues/")&&path.indexOf("issues")+6!=path.Length)//check url
+        {
+            TransIssuesDetail();
+        }
+        else if(path.includes("/actions"))
+        {
+            TransAction();
+        }
     }
 
     function TransIndexPg()
     {
         //Up Lable
-        r(/Search or jump to…/g, '搜索或者跳转至...');
+        //r(/Search or jump to…/g, '搜索或者跳转至...'); disable  beacuse too lag
         //Left
         r(/Recent Repositories/g, '最近的仓库');
         r(/Recent activity/g, '近期的活动');
@@ -91,13 +120,14 @@
         //top
         r(/Search or jump to…/g, '搜索或者跳转至...');
         r(/Public/g,'公共的');
-        r(/Pull requests/g,'Pull管理');
-        r(/Actions/g,'Action服务');
-        r(/Projects/g,'项目管理');
+        r(/Pull requests/g,'Pull');
+        r(/Actions/g,'Action');
+        r(/Projects/g,'项目');
         r(/Wiki/g,'文档');
         r(/Security/g,'安全');
         r(/Insights/g,'报表');
         r(/Settings/g,'设置');
+        r(/Discussions/g,'交流')
         //center
         r(/Go to file/g,'查找');
         r(/Add file/g,'创建');
@@ -108,7 +138,7 @@
         r(/Publish your first package/g,'发布你的第一个包');
         r(/Create a new package/g,'我要发布一个');
         //necessary
-        r(/Dismiss/g,'不了')
+        r(/Dismiss/g,'忽略')
 
     }
 
@@ -143,6 +173,58 @@
         r(/Welcome to pull requests!/g,'欢迎使用Pull Requests');
     }
 
-    
+    function TransIssuesDetail()
+    {
+        console.log("[CG]Issues detail")
+        TransRespIndxPg();
+        r(/opened this issue on/g,'在右边所示的事件提交了这个Issues');
+        r(/New issue/g,'新建');
+        //right
+        r(/Assignees/g,'负责者');
+        r(/No one assigned/g,'没有特定的负责者');
+        r(/Labels/g,'类别');
+        r(/None yet/g,'暂无');
+        r(/Milestone/g,'标记');
+        r(/No milestone/g,'未被分类');
+        r(/Notifications/g,'关注问题');
+        r(/Subscribe/g,'关注');
+        r(/You’re not receiving notifications from this thread./g,'你暂未收到此问题发出的通知');
+        r(/Development/g,'开发');
+        r(/No branches or pull requests/g,'没有与此有关的分支和Pull');
+        r(/Customize/g,'定制');
+        r(/Notification settings/g,'通知设置');
+        //reply
+        r(/Leave a comment/g,'你的回复。');
+        r(/Attach files by dragging & dropping, selecting or pasting them./g,'你可以拖放，选择和粘贴附件');
+        r(/Comment/g,'回复');
+        r(/Remember, contributions to this repository should follow/g,'请注意，回复必须遵守下方超链接所示的两项条例、文件或规定。\n由于技术所限，这个页面的翻译会波及贡献者提交的回复的文本内容，你可以在油猴面板暂时关闭该插件来阅读受到翻译失误的文本内容。');
+    }
+
+    function TransAction()
+    {
+        TransActionFirstUse();
+    }
+
+    function TransActionFirstUse()
+    {
+        r(/Automate your workflow from idea to production/g,'你的工作，何必叠见杂出');
+        r(/GitHub Action makes it easy to automate all your software workflows, now with world-class CI/g,'Github Action可以让你的项目的工作流程变得自动化，现在体验世界一流的 CI');
+        r(/CD. Build, test, and deploy your code right from GitHub./g,'CD来构建，测试，以及部署你的项目。');
+        r(/Linux, macOS, Windows, ARM, and containers/g,'Linux，MacOS，Windows，ARM和各类容器');
+        r(/Hosted runners for every major OS make it easy to build and test all your projects. Run directly on a VM or inside a container. Use your own VMs, in the cloud or on-prem, with self-hosted runners./g,'每个主系统的托管运行单元都可以轻松地构建和测试所有项目。你可以直接在 VM 上或在容器内运行，或在云端中或本地使用自己的 VM，并具有自托管运行程序。');
+        r(/Save time with matrix workflows that simultaneously test across multiple operating systems and versions of your runtime./g,'使用 Matrix Workflows 技术可以在多个操作系统和运行时版本之间同时测试，从而节省时间。');
+        r(/Any language/g,'任何语言');
+        r(/GitHub Action supports Node.js, Python, Java, Ruby, PHP, Go, Rust, .NET, and more. Build, test, and deploy applications in your language of choice./g,'Github支持各类编程（或标记）语言（或平台）诸如 Node.js, Python, Java, Ruby, PHP, Go, Rust, .NET 框架, 等等。以用你选择的语言来构建、测试和部署你的项目');
+        r(/Live logs/g,'实时日志');
+        r(/See your workflow run in realtime with color and emoji. It’s one click to copy a link that highlights a specific line number to share a CI/g,'使用颜色、表情来标记项目的运行流程，只需单击一下即可复制一个突出显示特定行号的链接，以共享CI');
+        r(/CD failure/g,'CD故障');
+        r(/Automate your software development practices with workflow files embracing the Git flow by codifying it in your repository./g,'通过在存储库中编纂包含 Git 流的工作流文件，自动执行软件开发实践。');
+        r(/Multi-container testing/g,'多容器测试');
+        //我没学过docker
+        r(/Test your web service and its DB in your workflow by simply adding some docker-compose to your workflow file./g,'只需向工作流文件添加一些 docker-compose，即可在工作流中测试 Web 服务及其数据库。');
+        r(/Learn More/g,'了解更多');
+    }
 
 })();
+
+
