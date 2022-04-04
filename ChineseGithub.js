@@ -66,7 +66,7 @@
             console.info("[CG]Index");
             TransIndexPg();
         }
-        else if(document.body.outerHTML.includes("Issues")&&document.body.outerHTML.includes("Pull requests")&&document.body.outerHTML.includes("Code")&&!document.body.outerHTML.includes("History")&&!document.body.outerHTML.includes("Raw")&&!document.body.outerHTML.includes("Blame")&&!path.includes("/issues")&&!document.body.outerHTML.includes("Filters")){
+        else if(document.body.outerHTML.includes("Issues")&&document.body.outerHTML.includes("Pull requests")&&document.body.outerHTML.includes("Code")&&!document.body.outerHTML.includes("History")&&!document.body.outerHTML.includes("Raw")&&!document.body.outerHTML.includes("Blame")&&!path.includes("/issues")&&!document.body.outerHTML.includes("Filters")&&!path.includes("/search")){
             //后面的非条件是用来分辨是不是文件或者文件夹的页面，不然就会出现把代码或者文件夹名称一起翻译的尴尬情况
             console.info("[CG]Repository")
             TransRespIndxPg();
@@ -75,13 +75,21 @@
         {
             TransIssueAndPullsPg()
         }
-        else if(path.includes("/issues/")&&path.indexOf("issues")+6!=path.Length)//check url
+        else if(path.includes("/issues/"))//check url
         {
             TransIssuesDetail();
         }
         else if(path.includes("/actions"))
         {
             TransAction();
+        }
+        else if(path.includes("/projects"))
+        {
+            TransPjPg();
+        }
+        else if(path.includes("/wiki"))
+        {
+            TransWiki();
         }
     }
 
@@ -123,7 +131,7 @@
         r(/Pull requests/g,'Pull');
         r(/Actions/g,'Action');
         r(/Projects/g,'项目');
-        r(/Wiki/g,'文档');
+        //r(/Wiki/g,'文档');
         r(/Security/g,'安全');
         r(/Insights/g,'报表');
         r(/Settings/g,'设置');
@@ -167,10 +175,18 @@
         r(/Issues are used to track todos, bugs, feature requests, and more. As issues are created, they’ll appear here in a searchable and filterable list./g,'Issues是用于报告Bug，公布软件开发进度，反馈用户想要的特性等等。Issues被创建时，他会出现在筛选器和搜索面板中。');
         r(/To get started, you should/g,'要开始，你得先');
         r(/create an issue/g,'创建一个Issues');
+        r(/There aren’t any open issues./g,'空');
         r(/ProTip!/g,'提示：')
 
         //special things in pull page
         r(/Welcome to pull requests!/g,'欢迎使用Pull Requests');
+        r(/There aren’t any open pull requests./g,'没有Pull记录');
+        r(/Pull help you collaborate on code with other people. As pull requests are created, they’ll appear here in a searchable and filterable list./g,'Pull能帮助你与他人协作。创建Pull Requst后，它会显示在这个列表中。');
+        r(/You could search/g,'你可以在');
+        r(/all of GitHub/g,'整个Github上搜索');
+        r(/or try an/g,'或者使用');
+        r(/advanced search/g,'高级搜索');
+        r(/New pull request/g,'新建');
     }
 
     function TransIssuesDetail()
@@ -203,11 +219,33 @@
     function TransAction()
     {
         TransActionFirstUse();
+        //no actions.
+        r(/Get started with GitHub Actions/g,'让我们开始');
+        r(/Build, test, and deploy your code. Make code reviews, branch management, and issue triaging work the way you want. Select a workflow to get started./g,'构建，测试和部署代码。使代码审查、分支管理和问题分类以您想要的方式工作。选择一个工作流以开始。')
+        r(/Skip this and /g,'跳过这个并且');
+        r(/set up a workflow yourself/g,'设置一个你自己的工作流');
+        r(/Suggested for this repository/g,'针对这个仓库为你推荐');
+        r(/Deployment/g,'部署');
+        r(/Configure/g,'配置');
+        r(/Continuous integration/g,'集成功能');
+        r(/Automation/g,'自动化');
+        //action manager
+        r(/New workflow/g,'新建')
+        r(/All workflows/g,'全部的工作流');
+        r(/Showing runs from all workflows/g,'显示所有正在运行的工作流');
+        r(/View workflow file/g,'查看工作流的源文件');
+        r(/Delete workflow run/g,'从表中移除');
+        r(/Workflows/g,'项目的工作流');
+        //r(/Are you sure you want to delete this workflow run?/g,'你真的要移除它吗？');
+        //r(/ This action cannot be undone./g,'操作不能被撤销。');
+        //r(/Yes, permanently delete this workflow run/g,'我明白，删除');
+        r(/There are no workflow runs yet./g,'空');
+        r(/workflow runs/g,'正在运行的工作流');
     }
 
     function TransActionFirstUse()
     {
-        r(/Automate your workflow from idea to production/g,'你的工作，何必叠见杂出');
+        r(/Automate your workflow from idea to production/g,'你的工作，何必循环往复');
         r(/GitHub Action makes it easy to automate all your software workflows, now with world-class CI/g,'Github Action可以让你的项目的工作流程变得自动化，现在体验世界一流的 CI');
         r(/CD. Build, test, and deploy your code right from GitHub./g,'CD来构建，测试，以及部署你的项目。');
         r(/Linux, macOS, Windows, ARM, and containers/g,'Linux，MacOS，Windows，ARM和各类容器');
@@ -221,8 +259,32 @@
         r(/Automate your software development practices with workflow files embracing the Git flow by codifying it in your repository./g,'通过在存储库中编纂包含 Git 流的工作流文件，自动执行软件开发实践。');
         r(/Multi-container testing/g,'多容器测试');
         //我没学过docker
-        r(/Test your web service and its DB in your workflow by simply adding some docker-compose to your workflow file./g,'只需向工作流文件添加一些 docker-compose，即可在工作流中测试 Web 服务及其数据库。');
+        r(/Test your web service and its DB in your workflow by simply adding some/g,'只需向工作流文件添加一些 ');
+        r(/ to your workflow file./g,' 即可在工作流中测试 Web 服务及其数据库。');
         r(/Learn More/g,'了解更多');
+    }
+
+    function TransPjPg()
+    {
+        r(/Add project/g,'新建');
+        r(/Easily access your projects here/g,'在这轻松管理你的项目');
+        r(/Add a project for it to appear in this list or go to/g,'新建一个项目或者前往');
+        r(/your projects/g,'你的资料页');
+        r(/to create a new one./g,'来新建一个新的');
+        r(/Go to your profile to create a new project/g,'前往你的资料页创建一个新的');
+    }
+
+    function TransWiki()
+    {
+        r(/Wikis provide a place in your repository to lay out the roadmap of your project, show the current status, and document software better, together./g,'Wiki 在您的存储库中提供了一个用于布置项目的规划，显示当前状态及记录软件成长的地方。</br>警告：本插件只会翻译Wiki页面的句子，这是为了避免由翻译失误导致Wiki文本错乱而为您带来麻烦。')
+        r(/Create the first page/g,'新建');
+        if(window.location.pathname.includes("/wiki/_new"))
+        {
+            r(/Create new page/g,'新建');
+            r(/Edit message/g,'备注');
+            r(/Initial Home page/g,'初始页');
+            r(/Save Pge/g,'保存');
+        }
     }
 
 })();
